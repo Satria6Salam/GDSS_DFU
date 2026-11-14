@@ -1,3 +1,4 @@
+@php use App\Support\AuditLabels; @endphp
 <x-layouts.app title="Audit Log" active="audit">
     <x-slot:header>
         <x-page-header crumb="Sesi {{ $session->title }} › Audit Log" :status="$session->status">
@@ -7,34 +8,36 @@
 
     <div class="card-soft">
         <form method="GET" class="d-flex flex-wrap gap-2 align-items-center mb-3">
-            <span class="small text-muted-2 me-auto">Catatan hanya dapat ditambah; tidak dapat diubah atau dihapus (Bab 7.7).</span>
+            <span class="small text-muted-2 me-auto">{{ $logs->total() }} catatan. Hanya dapat ditambah; tidak dapat diubah atau dihapus.</span>
             <select name="action" class="form-select form-select-sm" style="max-width: 260px" onchange="this.form.submit()" aria-label="Saring aksi">
                 <option value="">Semua aksi</option>
                 @foreach ($actions as $action)
-                    <option value="{{ $action }}" @selected($selected === $action)>{{ str_replace('_', ' ', $action) }}</option>
+                    <option value="{{ $action }}" @selected($selected === $action)>{{ AuditLabels::label($action) }}</option>
                 @endforeach
             </select>
         </form>
 
         <div class="table-responsive">
             <table class="table table-sm align-middle mb-2">
-                <thead><tr><th>Waktu</th><th>Pelaku</th><th>Aksi</th><th>Status</th><th>Catatan / data</th></tr></thead>
+                <thead><tr><th style="width: 150px">Waktu</th><th style="width: 170px">Pelaku</th><th>Aksi</th><th>Perubahan status</th><th>Keterangan</th></tr></thead>
                 <tbody>
                 @forelse ($logs as $log)
                     <tr>
-                        <td class="text-nowrap small">{{ $log->created_at->format('d-m-Y H:i:s') }}</td>
+                        <td class="text-nowrap small num">{{ $log->created_at->format('d-m-Y H:i:s') }}</td>
                         <td class="small">{{ $log->user?->name ?? 'Sistem' }}</td>
-                        <td class="small fw-bold text-navy">{{ str_replace('_', ' ', $log->action) }}</td>
+                        <td class="small">
+                            <i class="bi bi-{{ AuditLabels::icon($log->action) }} text-muted-2 me-1"></i>
+                            <span class="fw-semibold">{{ AuditLabels::label($log->action) }}</span>
+                        </td>
                         <td class="small text-nowrap">
                             @if ($log->from_status || $log->to_status)
-                                {{ $log->from_status ?? '–' }} → {{ $log->to_status ?? '–' }}
+                                <span class="text-muted-2">{{ str_replace('_', ' ', $log->from_status ?? '–') }}</span>
+                                <i class="bi bi-arrow-right mx-1 text-muted-2"></i>{{ str_replace('_', ' ', $log->to_status ?? '–') }}
                             @endif
                         </td>
                         <td class="small text-muted-2">
-                            @if ($log->note) “{{ $log->note }}” @endif
-                            @if ($log->meta)
-                                <code class="small">{{ \Illuminate\Support\Str::limit(json_encode($log->meta, JSON_UNESCAPED_UNICODE), 120) }}</code>
-                            @endif
+                            {{ AuditLabels::detail($log) }}
+                            @if ($log->note) <div class="text-body">“{{ $log->note }}”</div> @endif
                         </td>
                     </tr>
                 @empty

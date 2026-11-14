@@ -184,7 +184,7 @@ class CaseAndHistoryTest extends TestCase
 
         $this->actingAs($this->user('dokter'))->get(route('sessions.index'))->assertOk()
             ->assertSee('Sesi baru dapat dibuat setelah sesi yang berjalan difinalisasi');
-        $this->get(route('audit.index', $this->demo))->assertOk()->assertSee('SESSION CREATE');
+        $this->get(route('audit.index', $this->demo))->assertOk()->assertSee('Sesi dibuat');
         $this->get(route('audit.index', [$this->demo, 'action' => 'LOGIN']))->assertOk()->assertSee('Belum ada catatan');
     }
 }

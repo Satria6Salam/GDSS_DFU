@@ -115,7 +115,8 @@ class VotingAndResultTest extends TestCase
             $response->assertSeeInOrder(['P04', '2 (6)', '2 (6)', '4 (4)', '16']);
             // Bandingkan isi <main> saja: navbar dan token CSRF memang berbeda per pengguna.
             preg_match('/<main>(.*)<\/main>/s', $response->getContent(), $main);
-            $pages[] = $main[1];
+            // Kepala cetak memuat nama pencetak dan waktu cetak, jadi dikeluarkan dari perbandingan.
+            $pages[] = preg_replace('/<div class="print-only.*?<hr>\s*<\/div>/s', '', $main[1]);
         }
         $this->assertCount(1, array_unique($pages), 'Ketiga anggota melihat konten hasil yang sama.');
 

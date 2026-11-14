@@ -13,11 +13,16 @@
             @csrf
             @method('PUT')
             <div class="row g-4">
-                <div class="col-xl-8">
+                <div class="col-lg-8">
                     <div class="card-soft">
                         <h3 class="mb-1">Seberapa penting kriteria kiri dibanding kanan?</h3>
-                        <p class="text-muted-2 small mb-2">Pilih angka di sisi kriteria yang lebih penting. Angka 1 di tengah = sama penting
-                            (skala Saaty, Bab 5.1.1).</p>
+                        <p class="text-muted-2 small mb-3">Pilih angka di sisi kriteria yang lebih penting: 3 sedikit lebih penting,
+                            5 lebih penting, 7 sangat lebih penting, 9 mutlak lebih penting. Angka 1 di tengah = sama penting.</p>
+                        <div class="pair-row pair-head" aria-hidden="true">
+                            <span>Kriteria kiri</span>
+                            <div class="scale-legend"><span>← kiri lebih penting</span><span>sama</span><span>kanan lebih penting →</span></div>
+                            <span class="right">Kriteria kanan</span>
+                        </div>
                         @foreach ($pairs as $pair)
                             <div class="pair-row">
                                 <b title="{{ $pair['left']->definition }}">{{ $pair['left']->code }} {{ $pair['left']->name }}</b>
@@ -39,7 +44,7 @@
                     </div>
                 </div>
 
-                <div class="col-xl-4">
+                <div class="col-lg-4">
                     <div class="card-soft position-sticky" style="top: 16px">
                         <h3>Bobot Sementara</h3>
                         @foreach ($criteria as $criterion)

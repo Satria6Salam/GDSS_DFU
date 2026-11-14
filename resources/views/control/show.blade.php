@@ -155,18 +155,24 @@
             @endif
 
             <div class="card-soft">
-                <h3><i class="bi bi-clock-history me-1"></i> Aktivitas Terakhir</h3>
-                @forelse ($logs as $log)
-                    <div class="small mb-2">
-                        <span class="text-navy fw-bold">{{ str_replace('_', ' ', $log->action) }}</span>
-                        <span class="text-muted-2">· {{ $log->user?->name ?? 'Sistem' }} · {{ $log->created_at->format('d-m H:i') }}</span>
-                        @if ($log->note)
-                            <div class="text-muted-2">“{{ $log->note }}”</div>
-                        @endif
-                    </div>
-                @empty
-                    <div class="small text-muted-2">Belum ada aktivitas.</div>
-                @endforelse
+                <div class="d-flex align-items-center mb-2">
+                    <h3 class="mb-0 flex-grow-1">Aktivitas Terakhir</h3>
+                    <a href="{{ route('audit.index', $session) }}" class="small">Lihat semua</a>
+                </div>
+                <ul class="timeline">
+                    @forelse ($logs as $log)
+                        <li>
+                            <span class="dot"><i class="bi bi-{{ \App\Support\AuditLabels::icon($log->action) }}"></i></span>
+                            <div>
+                                <b>{{ \App\Support\AuditLabels::label($log->action) }}</b>
+                                <div class="text-muted-2">{{ $log->user?->name ?? 'Sistem' }} · {{ $log->created_at->format('d M, H:i') }}</div>
+                                @if ($log->note) <div class="text-muted-2 fst-italic">“{{ $log->note }}”</div> @endif
+                            </div>
+                        </li>
+                    @empty
+                        <li class="text-muted-2">Belum ada aktivitas.</li>
+                    @endforelse
+                </ul>
             </div>
         </div>
     </div>

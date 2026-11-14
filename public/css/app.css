@@ -278,8 +278,13 @@ h1, h2, h3, h4, h5 { color: var(--ink); }
 
 /* ---------- responsif ---------- */
 @media (max-width: 1199.98px) {
+  .pair-row { grid-template-columns: minmax(80px, 1fr) auto minmax(80px, 1fr); gap: 8px; }
+  .saaty label { width: 20px; height: 24px; font-size: .64rem; }
+  .crit-row { grid-template-columns: 1fr; gap: 6px; }
+}
+@media (max-width: 767.98px) {
   .pair-row { grid-template-columns: 1fr 1fr; } .pair-row .saaty { grid-column: 1 / -1; order: 3; }
-  .crit-row { grid-template-columns: 1fr; }
+  .pair-head { display: none; }
 }
 @media (max-width: 991.98px) {
   .stat-strip { grid-template-columns: repeat(2, 1fr); }
@@ -299,3 +304,53 @@ h1, h2, h3, h4, h5 { color: var(--ink); }
 .steps-dark li.done::after { background: #5FD0C6; }
 .steps-dark li.current { color: #fff; }
 .steps-dark li.current .num { background: #fff; border-color: #fff; color: var(--navy); }
+
+
+/* ---------- penyempurnaan tahap akhir ---------- */
+.num, .table td, .weight-row span, .hero-stats b, .rank-row span { font-variant-numeric: tabular-nums; }
+
+/* legenda arah skala AHP */
+.pair-head { border-bottom: 1px solid var(--line); padding-top: 0; }
+.pair-head > span { font-size: .68rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+.scale-legend { display: flex; justify-content: space-between; font-size: .68rem; color: var(--muted); }
+
+/* aksi selesai di dashboard */
+.quick.is-done::after { content: "\F26A"; color: var(--teal); font-size: 1rem; }
+.quick.is-done small { color: var(--teal); }
+
+/* linimasa aktivitas */
+.timeline { list-style: none; margin: 0; padding: 0; font-size: .8rem; }
+.timeline li { display: flex; gap: 10px; position: relative; padding-bottom: 12px; }
+.timeline li:not(:last-child)::before { content: ""; position: absolute; left: 11px; top: 24px; bottom: 0; width: 1px; background: var(--line); }
+.timeline .dot { width: 23px; height: 23px; border-radius: 50%; background: #EEF1F5; color: var(--ink-2); flex: none;
+  display: inline-flex; align-items: center; justify-content: center; font-size: .7rem; }
+.timeline b { font-weight: 600; color: var(--ink); }
+
+/* data klinis per kriteria */
+.clinical { margin: 0; border: 1px solid var(--line-2); border-radius: var(--radius-sm); }
+.clinical-group { display: grid; grid-template-columns: 104px 1fr; border-bottom: 1px solid var(--line-2); }
+.clinical-group:last-child { border-bottom: 0; }
+.clinical dt { background: #F7F9FB; padding: 8px 10px; font-size: .7rem; font-weight: 600; color: var(--ink-2); border-right: 1px solid var(--line-2); }
+.clinical dd { margin: 0; padding: 4px 10px; }
+.clinical dd > div { display: flex; justify-content: space-between; gap: 12px; padding: 4px 0; font-size: .8rem; }
+.clinical dd > div + div { border-top: 1px dashed var(--line-2); }
+.clinical dd span { color: var(--muted); }
+.clinical dd b { font-weight: 600; color: var(--ink); text-align: right; }
+
+/* cetak hasil (Ctrl+P / simpan PDF dari peramban) */
+.print-only { display: none; }
+@media print {
+  @page { size: A4; margin: 14mm; }
+  body { background: #fff; font-size: 11px; }
+  .app-nav, .app-footer, .no-print, .page-head .steps, .btn { display: none !important; }
+  .print-only { display: block; }
+  .container-xxl { max-width: none; padding: 0 !important; }
+  .card-soft, .emergency, .alert-redflag { break-inside: avoid; box-shadow: none; }
+  .hero { background: none !important; color: var(--ink); border: 1px solid var(--line); }
+  .hero::before { display: none; }
+  .hero h1, .hero-stats b { color: var(--ink) !important; }
+  .hero p, .hero-stats small, .eyebrow { color: var(--muted) !important; }
+  .track { border: 1px solid #ccc; }
+  .track > i { background: #555 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  a { color: inherit; text-decoration: none; }
+}

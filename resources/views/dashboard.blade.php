@@ -37,36 +37,36 @@
         <div class="card-soft mt-4">
             <div class="panel-title">Tugas Anda</div>
             @php
-                $canAssess = $session->isStatus(SessionStatus::Penilaian);
+                $hasAssessment = (bool) $myAssessment;
+                $isDone = in_array($myAssessment?->status, [AssessmentStatus::Final, AssessmentStatus::Terkunci], true);
                 $actions = [
                     ['icon' => 'sliders', 'tone' => 'blue', 'title' => 'Perbandingan Kriteria',
-                     'text' => "{$myProgress['pairs']}/{$myProgress['pairs_target']} pasang AHP terisi", 'enabled' => $canAssess,
-                     'href' => route('assessment.ahp', $session)],
+                     'text' => "{$myProgress['pairs']} dari {$myProgress['pairs_target']} pasang AHP terisi", 'enabled' => $hasAssessment,
+                     'done' => $myProgress['pairs'] === $myProgress['pairs_target'], 'href' => route('assessment.ahp', $session)],
                     ['icon' => 'clipboard2-pulse', 'tone' => '', 'title' => 'Skor Kasus',
-                     'text' => "{$myProgress['scores']}/{$myProgress['scores_target']} skor C1–C6 terisi", 'enabled' => $canAssess,
-                     'href' => route('assessment.scores', $session)],
+                     'text' => "{$myProgress['scores']} dari {$myProgress['scores_target']} skor terisi", 'enabled' => $hasAssessment,
+                     'done' => $myProgress['scores_target'] > 0 && $myProgress['scores'] === $myProgress['scores_target'], 'href' => route('assessment.scores', $session)],
                     ['icon' => 'bar-chart-line', 'tone' => 'blue', 'title' => 'Ringkasan & Hasil Saya',
-                     'text' => 'Kirim final, bobot, nilai V, peringkat', 'enabled' => (bool) $myAssessment,
-                     'href' => route('assessment.result', $session)],
+                     'text' => $isDone ? 'Penilaian sudah dikirim final' : 'Kirim final, lihat bobot dan peringkat', 'enabled' => $hasAssessment,
+                     'done' => $isDone, 'href' => route('assessment.result', $session)],
                     $user->isLeader()
                         ? ['icon' => 'people', 'tone' => '', 'title' => 'Panel Ketua', 'text' => 'Pantau anggota, ubah tahap sesi', 'enabled' => true,
-                           'href' => route('control.show', $session)]
+                           'done' => false, 'href' => route('control.show', $session)]
                         : ($session->isStatus(SessionStatus::Final)
-                            ? ['icon' => 'trophy', 'tone' => '', 'title' => 'Hasil Konsensus', 'text' => 'Urutan prioritas evaluasi', 'enabled' => true,
-                               'href' => route('consensus.show', $session)]
+                            ? ['icon' => 'trophy', 'tone' => '', 'title' => 'Hasil Konsensus', 'text' => 'Urutan prioritas dan kesimpulan', 'enabled' => true,
+                               'done' => false, 'href' => route('consensus.show', $session)]
                             : ['icon' => 'award', 'tone' => '', 'title' => 'Voting', 'text' => 'Konfirmasi suara Anda',
-                               'enabled' => $session->isStatus(SessionStatus::Voting), 'href' => route('vote.show', $session)]),
+                               'enabled' => $session->isStatus(SessionStatus::Voting), 'done' => false, 'href' => route('vote.show', $session)]),
                 ];
             @endphp
             <div class="row g-3">
                 @foreach ($actions as $action)
                     <div class="col-sm-6 col-xl-3">
-                        <a href="{{ $action['href'] ?? '#' }}" @class(['quick', 'is-disabled' => ! $action['enabled'] || ! isset($action['href'])]) aria-disabled="{{ $action['enabled'] ? 'false' : 'true' }}">
+                        <a href="{{ $action['href'] ?? '#' }}" @class(['quick', 'is-done' => $action['done'], 'is-disabled' => ! $action['enabled'] || ! isset($action['href'])]) aria-disabled="{{ $action['enabled'] ? 'false' : 'true' }}">
                             <span class="icon-tile {{ $action['tone'] }}"><i class="bi bi-{{ $action['icon'] }}"></i></span>
                             <div>
                                 <b>{{ $action['title'] }}</b>
                                 <small>{{ $action['text'] }}</small>
-                                <div class="go"><i class="bi bi-arrow-right"></i></div>
                             </div>
                         </a>
                     </div>

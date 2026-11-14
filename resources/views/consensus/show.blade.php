@@ -8,8 +8,24 @@
     <x-slot:header>
         <x-page-header crumb="Sesi {{ $session->title }} › Hasil Konsensus" :status="$session->status">
             Urutan Prioritas Evaluasi
+            @if ($isFinal && $consensus)
+                <x-slot:actions>
+                    <button type="button" class="btn btn-outline-soft btn-sm" onclick="window.print()">
+                        <i class="bi bi-printer me-1"></i> Cetak / Simpan PDF
+                    </button>
+                </x-slot:actions>
+            @endif
         </x-page-header>
     </x-slot:header>
+
+    @if ($isFinal && $consensus)
+        <div class="print-only mb-3">
+            <div style="font-size: 15px; font-weight: 700">GDSS DFU — Hasil Konsensus Prioritas Evaluasi</div>
+            <div>Sesi: {{ $session->title }} · difinalisasi {{ $consensus->finalized_at?->format('d-m-Y H:i') }} oleh {{ $consensus->finalizer?->name }}</div>
+            <div>Dicetak oleh {{ auth()->user()->name }} pada {{ now()->format('d-m-Y H:i') }} · DATA SIMULASI · prototipe akademik, bukan dokumen medis</div>
+            <hr>
+        </div>
+    @endif
 
     @if ($redFlagCases->isNotEmpty())
         <div class="alert-redflag mb-4" role="alert">
