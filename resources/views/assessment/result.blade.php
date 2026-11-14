@@ -6,7 +6,7 @@
 <x-layouts.app title="Ringkasan & Hasil" active="penilaian">
     <x-slot:header>
         <x-page-header crumb="Sesi {{ $session->title }} › Penilaian Saya" :status="$session->status">
-            Ringkasan &amp; <span class="acc">Hasil</span> Saya
+            Ringkasan &amp; Hasil Saya
         </x-page-header>
     </x-slot:header>
 

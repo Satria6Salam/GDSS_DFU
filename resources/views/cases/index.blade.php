@@ -1,7 +1,7 @@
 <x-layouts.app title="Kasus" active="kasus">
     <x-slot:header>
         <x-page-header crumb="Sesi {{ $session->title }} › Kasus" :status="$session->status">
-            Daftar <span class="acc">Kasus</span> Simulasi
+            Daftar Kasus Simulasi
         </x-page-header>
     </x-slot:header>
 
@@ -32,11 +32,20 @@
 
         @if ($cases->isEmpty())
             <div class="card-soft text-center py-5">
-                <span class="icon-tile blue mb-3"><i class="bi bi-clipboard2-plus"></i></span>
+                <img src="{{ asset('images/kasus-glukometer.jpg') }}" alt="" class="empty-photo">
                 <h3>Belum ada kasus</h3>
                 <p class="text-muted-2 mb-0">Tambahkan kasus satu per satu atau impor dataset {{ config('gdss.dataset_version') }}.</p>
             </div>
         @else
+            <div class="card-soft d-flex flex-wrap gap-3 align-items-center mb-3 py-3">
+                <img src="{{ asset('images/kasus-glukometer.jpg') }}" alt="" style="width: 120px; height: 72px; object-fit: cover; border-radius: 6px">
+                <div class="small text-muted-2" style="max-width: 760px">
+                    Kasus pasien <b class="text-navy">fiktif</b> untuk demonstrasi dan pengujian (Bab 4). Skor C1–C6 diisi masing-masing decision
+                    maker berdasarkan data klinis dan rubrik. Kasus bertanda merah memiliki tanda bahaya dan dievaluasi segera, terlepas dari skor.
+                </div>
+            </div>
+        @endif
+        @if ($cases->isNotEmpty())
             <div class="card-soft">
                 <div class="table-responsive">
                     <table class="table align-middle mb-0">

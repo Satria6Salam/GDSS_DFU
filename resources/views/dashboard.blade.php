@@ -12,29 +12,19 @@
             </p>
         </div>
     @else
-        {{-- Hero sambutan --}}
-        <div class="hero d-flex flex-column flex-lg-row gap-4">
-            <div class="flex-grow-1">
-                <div class="eyebrow">Sesi {{ $session->title }} · {{ $user->isLeader() ? 'Ketua Tim' : $user->role->label() }}</div>
-                <h1>Selamat datang, {{ $user->name }}</h1>
-                <div style="opacity: .92; max-width: 540px; line-height: 1.5">{{ $session->status->description() }}</div>
-                <x-status-stepper :status="$session->status" variant="pills" />
-            </div>
-            <div class="d-flex flex-column gap-2 justify-content-center">
-                <div class="float-card">
-                    <span class="icon-tile"><i class="bi bi-check2-circle"></i></span>
-                    <div><b>{{ $finalCount }} / {{ $members->count() }} Final</b><small>Penilaian anggota</small></div>
-                </div>
-                <div class="float-card">
-                    <span class="icon-tile blue"><i class="bi bi-sliders"></i></span>
-                    <div>
-                        @if ($myAssessment?->cr !== null)
-                            <b>CR {{ number_format($myAssessment->cr, 4, ',', '.') }}</b>
-                            <small>{{ $myAssessment->cr <= 0.10 ? 'Matriks AHP Anda konsisten' : 'Matriks AHP perlu ditinjau' }}</small>
-                        @else
-                            <b>CR belum dihitung</b><small>Isi perbandingan kriteria</small>
-                        @endif
-                    </div>
+        {{-- Banner sesi --}}
+        <div class="hero" style="background-image: url('{{ asset('images/banner-koridor.jpg') }}')">
+            <div class="eyebrow">Sesi keputusan aktif</div>
+            <h1>{{ $session->title }}</h1>
+            <p>Selamat datang, {{ $user->name }} — {{ $user->isLeader() ? 'ketua tim' : mb_strtolower($user->role->label()) }}.
+                {{ $session->status->description() }}</p>
+            <x-status-stepper :status="$session->status" variant="dark" class="mt-3" />
+            <div class="hero-stats">
+                <div><small>Penilaian final</small><b>{{ $finalCount }} / {{ $members->count() }}</b></div>
+                <div><small>Kasus</small><b>{{ $caseCount }}</b></div>
+                <div><small>Red flag</small><b>{{ $redFlagCases->count() }}</b></div>
+                <div><small>CR AHP Anda</small>
+                    <b>{{ $myAssessment?->cr !== null ? number_format($myAssessment->cr, 4, ',', '.') : '–' }}</b>
                 </div>
             </div>
         </div>
@@ -45,7 +35,7 @@
 
         {{-- Aksi cepat --}}
         <div class="card-soft mt-4">
-            <div class="panel-title">Apa yang perlu Anda <span class="acc">lakukan?</span></div>
+            <div class="panel-title">Tugas Anda</div>
             @php
                 $canAssess = $session->isStatus(SessionStatus::Penilaian);
                 $actions = [
@@ -154,9 +144,12 @@
                     </div>
                 @endif
                 <div class="card-soft">
-                    <h3><i class="bi bi-bell me-1"></i> Notifikasi</h3>
+                    <h3>Notifikasi</h3>
                     @forelse ($notifications as $notification)
-                        <div class="small text-muted-2 mb-1">• {{ $notification->data['message'] ?? '' }}</div>
+                        <div class="d-flex gap-2 small py-1 border-bottom border-light-subtle">
+                            <span class="text-muted-2 text-nowrap">{{ $notification->created_at->format('d/m H:i') }}</span>
+                            <span>{{ $notification->data['message'] ?? '' }}</span>
+                        </div>
                     @empty
                         <div class="small text-muted-2">Belum ada notifikasi.</div>
                     @endforelse
@@ -164,11 +157,5 @@
             </div>
         </div>
 
-        <x-stat-strip class="mt-4" :items="[
-            ['icon' => 'clipboard2-pulse', 'value' => $caseCount, 'label' => 'Kasus simulasi'],
-            ['icon' => 'exclamation-triangle', 'value' => $redFlagCases->count(), 'label' => 'Kasus red flag'],
-            ['icon' => 'sliders', 'value' => $criteriaCount, 'label' => 'Kriteria · rubrik '.config('gdss.criteria_version')],
-            ['icon' => 'check2-circle', 'value' => $finalCount.'/'.$members->count(), 'label' => 'Penilaian final'],
-        ]" />
     @endif
 </x-layouts.app>

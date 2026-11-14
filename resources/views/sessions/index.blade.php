@@ -2,7 +2,7 @@
 <x-layouts.app title="Riwayat Sesi" active="riwayat">
     <x-slot:header>
         <x-page-header crumb="Riwayat keputusan">
-            Riwayat <span class="acc">Sesi</span> Keputusan
+            Riwayat Sesi Keputusan
         </x-page-header>
     </x-slot:header>
 

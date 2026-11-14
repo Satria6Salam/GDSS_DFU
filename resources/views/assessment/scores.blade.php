@@ -1,24 +1,25 @@
 <x-layouts.app title="Skor Kasus" active="penilaian">
     <x-slot:header>
         <x-page-header crumb="Sesi {{ $session->title }} › Penilaian Saya" :status="$session->status">
-            Skor <span class="acc">Kasus</span>
+            Skor Kasus
         </x-page-header>
     </x-slot:header>
 
     @include('assessment.partials.frame', ['tab' => 'scores'])
 
     @if ($assessment && $case)
-        <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
-            @foreach ($cases as $item)
-                <a href="{{ route('assessment.scores', [$session, 'case' => $item->kode_kasus]) }}"
-                   @class(['tab-pill', 'active' => $item->is($case), 'rf' => $item->hasRedFlag() && ! $item->is($case)])
-                   title="{{ $item->hasRedFlag() ? 'Kasus dengan red flag' : '' }}">
-                    {{ $item->kode_kasus }}
-                    @if (in_array($item->id, $completeCases, true)) <i class="bi bi-check-lg dot-ok"></i> @endif
-                    @if ($item->hasRedFlag()) <i class="bi bi-exclamation-triangle"></i> @endif
-                </a>
-            @endforeach
-            <span class="small fw-bold text-teal ms-1">Terisi {{ $scoresFilled }} / {{ $scoresTarget }}</span>
+        <div class="d-flex flex-wrap align-items-center gap-3 mb-3">
+            <div class="case-tabs">
+                @foreach ($cases as $item)
+                    <a href="{{ route('assessment.scores', [$session, 'case' => $item->kode_kasus]) }}"
+                       @class(['active' => $item->is($case), 'rf' => $item->hasRedFlag()])
+                       title="{{ $item->hasRedFlag() ? 'Kasus dengan red flag' : '' }}">
+                        {{ $item->kode_kasus }}
+                        @if (in_array($item->id, $completeCases, true)) <i class="bi bi-check-lg"></i> @endif
+                    </a>
+                @endforeach
+            </div>
+            <span class="small text-muted-2">Terisi <b class="text-navy">{{ $scoresFilled }}</b> dari {{ $scoresTarget }} skor</span>
         </div>
 
         <div class="row g-4">

@@ -5,7 +5,7 @@
 <x-layouts.app title="Voting" active="voting">
     <x-slot:header>
         <x-page-header crumb="Sesi {{ $session->title }} › Voting" :status="$session->status">
-            Konfirmasi <span class="acc">Suara</span> Anda
+            Konfirmasi Suara Anda
         </x-page-header>
     </x-slot:header>
 

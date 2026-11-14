@@ -1,21 +1,12 @@
-@props(['status', 'variant' => 'steps'])
-@php
-    $current = $status->step();
-@endphp
-@if ($variant === 'pills')
-    <div {{ $attributes->merge(['class' => 'hero-pills']) }}>
-        @foreach (\App\Enums\SessionStatus::cases() as $stage)
-            <span @class(['done' => $stage->step() < $current, 'current' => $stage->step() === $current])>
-                {{ $stage->step() < $current ? '✓ ' : '' }}{{ $stage->label() }}
-            </span>
-        @endforeach
-    </div>
-@else
-    <div {{ $attributes->merge(['class' => 'stepper']) }}>
-        @foreach (\App\Enums\SessionStatus::cases() as $stage)
-            <span @class(['done' => $stage->step() < $current, 'current' => $stage->step() === $current])>
-                {{ $stage->step() < $current ? '✓ ' : '' }}{{ mb_strtoupper($stage->label()) }}
-            </span>
-        @endforeach
-    </div>
-@endif
+@props(['status', 'variant' => 'light'])
+{{-- Tahap sesi bernomor (Bab 7.2). Varian "dark" untuk dipakai di atas banner berfoto. --}}
+@php $current = $status->step(); @endphp
+<ol {{ $attributes->class(['steps', 'steps-dark' => $variant === 'dark']) }} aria-label="Tahap sesi">
+    @foreach (\App\Enums\SessionStatus::cases() as $stage)
+        @php $n = $stage->step(); @endphp
+        <li @class(['done' => $n < $current, 'current' => $n === $current]) @if ($n === $current) aria-current="step" @endif>
+            <span class="num">@if ($n < $current)<i class="bi bi-check-lg"></i>@else{{ $n }}@endif</span>
+            <span class="label">{{ $stage->label() }}</span>
+        </li>
+    @endforeach
+</ol>

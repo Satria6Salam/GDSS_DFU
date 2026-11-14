@@ -9,7 +9,7 @@
 <x-layouts.app title="Panel Ketua" active="panel">
     <x-slot:header>
         <x-page-header crumb="Sesi {{ $session->title }} › Panel Ketua" :status="$status">
-            Panel <span class="acc">Ketua</span> Tim
+            Panel Ketua Tim
         </x-page-header>
     </x-slot:header>
 

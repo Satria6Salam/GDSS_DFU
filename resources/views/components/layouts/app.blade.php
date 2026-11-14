@@ -27,7 +27,7 @@
     @isset($scripts)
         <x-slot:scripts>{{ $scripts }}</x-slot:scripts>
     @endisset
-    <nav class="app-nav navbar navbar-expand-lg py-0">
+    <nav class="app-nav navbar navbar-expand-lg navbar-dark py-0">
         <div class="container-xxl px-4">
             <x-brand :href="route('dashboard')" class="me-4" />
             <button class="navbar-toggler my-2" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"

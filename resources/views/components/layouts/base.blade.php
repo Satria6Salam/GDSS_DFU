@@ -15,10 +15,11 @@
     {{ $slot }}
 
     <footer class="app-footer">
-        <div class="container-xxl px-4 d-flex gap-2 align-items-center">
-            <i class="bi bi-shield-check"></i>
-            <span>Prototipe akademik — bukan perangkat medis dan tidak menggantikan keputusan tenaga kesehatan.
-                Kondisi darurat tidak menunggu voting. Seluruh data adalah DATA SIMULASI.</span>
+        <div class="container-xxl px-4 d-flex flex-wrap gap-2 align-items-center">
+            <span><i class="bi bi-shield-check me-1"></i>Prototipe akademik — bukan perangkat medis dan tidak menggantikan keputusan
+                tenaga kesehatan. Kondisi darurat tidak menunggu voting. Seluruh data adalah DATA SIMULASI.</span>
+            <span class="ms-auto">GDSS DFU · Praktikum Sistem Informasi {{ now()->year }} ·
+                <a href="{{ asset('images/CREDITS.md') }}" class="text-reset">Kredit foto</a></span>
         </div>
     </footer>
 

@@ -1,7 +1,7 @@
 <x-layouts.app title="Kasus {{ $case->kode_kasus }}" active="kasus">
     <x-slot:header>
         <x-page-header crumb="Sesi {{ $session->title }} › Kasus › {{ $case->kode_kasus }}" :status="$session->status">
-            Kasus <span class="acc">{{ $case->kode_kasus }}</span>
+            Kasus {{ $case->kode_kasus }}
         </x-page-header>
     </x-slot:header>
 

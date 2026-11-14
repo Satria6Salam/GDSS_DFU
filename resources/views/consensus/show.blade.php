@@ -7,7 +7,7 @@
 <x-layouts.app title="Hasil Konsensus" active="hasil">
     <x-slot:header>
         <x-page-header crumb="Sesi {{ $session->title }} › Hasil Konsensus" :status="$session->status">
-            Urutan <span class="acc">Prioritas</span> Evaluasi
+            Urutan Prioritas Evaluasi
         </x-page-header>
     </x-slot:header>
 
@@ -33,7 +33,7 @@
         </div>
     @else
         @unless ($isFinal)
-            <div class="alert alert-info rounded-4 border-0 small d-flex gap-2 align-items-center">
+            <div class="alert alert-info small d-flex gap-2 align-items-center">
                 <i class="bi bi-eye"></i> Pratinjau ketua: hanya total poin dan urutan. Rincian suara dan bobot tiap anggota terbuka setelah finalisasi (D13).
                 @if ($consensus->status === ConsensusStatus::PerluMusyawarah)
                     <b>Ada seri yang perlu ditetapkan di Panel Ketua.</b>
@@ -41,28 +41,22 @@
             </div>
         @endunless
 
-        {{-- Tiga teratas --}}
-        <div class="row g-3 mb-4">
-            @foreach ($consensus->items->take(3) as $item)
-                <div class="col-md-4">
-                    <div class="card-soft p-0 overflow-hidden h-100">
-                        <div class="d-flex justify-content-between align-items-center px-3 py-3 text-white" style="background: var(--grad)">
-                            <span>Peringkat {{ $item->final_rank }}</span><b class="fs-4">{{ $item->patientCase->kode_kasus }}</b>
-                        </div>
-                        <div class="px-3 py-3">
-                            <span class="fs-5 fw-800 text-navy">{{ $item->borda_points }}</span>
-                            <span class="small text-muted-2">poin Borda · V kelompok {{ $fmt($item->group_v) }}</span>
-                            <div class="mt-1">
-                                @if ($item->patientCase->hasRedFlag())
-                                    <span class="badge-status badge-rf">Red flag {{ $item->patientCase->redFlags->map(fn ($f) => $f->code->value)->implode(' · ') }}</span>
-                                @else
-                                    <span class="badge-status badge-final">Tanpa red flag</span>
-                                @endif
-                            </div>
-                        </div>
+        {{-- Banner hasil: tiga prioritas teratas --}}
+        <div class="hero mb-4" style="background-image: url('{{ asset('images/banner-rapat.jpg') }}')">
+            <div class="eyebrow">{{ $isFinal ? 'Keputusan kelompok' : 'Pratinjau sebelum finalisasi' }}</div>
+            <h1>{{ $consensus->items->count() }} kasus diurutkan dari {{ $members->count() }} suara</h1>
+            <p>Borda Count atas peringkat TOPSIS tiap decision maker; seri dipecah dengan V TOPSIS kelompok (D05).</p>
+            <div class="hero-stats">
+                @foreach ($consensus->items->take(3) as $item)
+                    <div>
+                        <small>Prioritas {{ $item->final_rank }}</small>
+                        <b>{{ $item->patientCase->kode_kasus }}</b>
+                        <span class="small" style="color:#C9D6E6">· {{ $item->borda_points }} poin
+                            @if ($item->patientCase->hasRedFlag()) · <span style="color:#FFB4B4">red flag {{ $item->patientCase->redFlags->map(fn ($f) => $f->code->value)->implode(', ') }}</span> @endif
+                        </span>
                     </div>
-                </div>
-            @endforeach
+                @endforeach
+            </div>
         </div>
 
         <div class="card-soft">

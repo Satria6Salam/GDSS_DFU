@@ -1,7 +1,7 @@
 <x-layouts.app title="Audit Log" active="audit">
     <x-slot:header>
         <x-page-header crumb="Sesi {{ $session->title }} › Audit Log" :status="$session->status">
-            Audit <span class="acc">Log</span>
+            Audit Log
         </x-page-header>
     </x-slot:header>
 

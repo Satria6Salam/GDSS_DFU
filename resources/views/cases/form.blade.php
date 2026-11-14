@@ -6,7 +6,7 @@
 <x-layouts.app :title="$isNew ? 'Tambah Kasus' : 'Ubah Kasus '.$case->kode_kasus" active="kasus">
     <x-slot:header>
         <x-page-header crumb="Sesi {{ $session->title }} › Kasus" :status="$session->status">
-            {{ $isNew ? 'Tambah' : 'Ubah' }} <span class="acc">Kasus</span> {{ $isNew ? '' : $case->kode_kasus }}
+            {{ $isNew ? 'Tambah' : 'Ubah' }} Kasus {{ $isNew ? '' : $case->kode_kasus }}
         </x-page-header>
     </x-slot:header>
 

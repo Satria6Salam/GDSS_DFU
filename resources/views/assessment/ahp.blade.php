@@ -2,7 +2,7 @@
 <x-layouts.app title="Perbandingan Kriteria" active="penilaian">
     <x-slot:header>
         <x-page-header crumb="Sesi {{ $session->title }} › Penilaian Saya" :status="$session->status">
-            Perbandingan <span class="acc">Kriteria</span> (AHP)
+            Perbandingan Kriteria (AHP)
         </x-page-header>
     </x-slot:header>
 
