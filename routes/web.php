@@ -1,10 +1,13 @@
 <?php
 
 use App\Http\Controllers\AssessmentController;
+use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\CaseController;
 use App\Http\Controllers\ConsensusController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LeaderPanelController;
+use App\Http\Controllers\RedFlagController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\VoteController;
 use App\Http\Controllers\WorkflowController;
@@ -38,6 +41,24 @@ Route::middleware('auth')->group(function () {
         Route::post('/withdraw', 'withdraw')->name('withdraw');
     });
 
+    // Riwayat sesi (H03).
+    Route::get('/sessions', [SessionController::class, 'index'])->name('sessions.index');
+
+    // Kasus (H04, H05). Rute "create" didaftarkan sebelum "{case}" agar tidak tertangkap sebagai kode kasus.
+    Route::prefix('/sessions/{session}/cases')->name('cases.')->controller(CaseController::class)->scopeBindings()->group(function () {
+        Route::middleware('leader')->group(function () {
+            Route::get('/create', 'create')->name('create');
+            Route::post('/', 'store')->name('store');
+            Route::post('/import', 'import')->name('import');
+            Route::get('/{case}/edit', 'edit')->name('edit');
+            Route::put('/{case}', 'update')->name('update');
+            Route::delete('/{case}', 'destroy')->name('destroy');
+            Route::post('/{case}/red-flags', [RedFlagController::class, 'store'])->name('red-flags.store');
+        });
+        Route::get('/', 'index')->name('index');
+        Route::get('/{case}', 'show')->name('show');
+    });
+
     // Voting (H10, V1) dan hasil konsensus (H11).
     Route::get('/sessions/{session}/vote', [VoteController::class, 'show'])->name('vote.show');
     Route::post('/sessions/{session}/vote', [VoteController::class, 'store'])->name('vote.store');
@@ -51,5 +72,6 @@ Route::middleware('auth')->group(function () {
         Route::post('/sessions/{session}/deliberation', [WorkflowController::class, 'deliberate'])->name('sessions.deliberate');
         Route::post('/sessions/{session}/reopen', [WorkflowController::class, 'reopen'])->name('sessions.reopen');
         Route::post('/sessions/{session}/finalize', [WorkflowController::class, 'finalize'])->name('sessions.finalize');
+        Route::get('/sessions/{session}/audit', [AuditLogController::class, 'index'])->name('audit.index');
     });
 });

@@ -4,7 +4,7 @@
     // Menu navbar per peran (Bab 10.3). Menu yang rutenya belum dibuat tampil pudar.
     $menu = [
         ['key' => 'dashboard', 'label' => 'Dashboard', 'route' => 'dashboard'],
-        ['key' => 'kasus', 'label' => 'Kasus', 'route' => 'cases.index'],
+        ['key' => 'kasus', 'label' => 'Kasus', 'route' => 'cases.index', 'session' => true],
         ['key' => 'penilaian', 'label' => 'Penilaian', 'route' => 'assessment.ahp', 'session' => true],
         ['key' => 'voting', 'label' => 'Voting', 'route' => 'vote.show', 'session' => true],
         ['key' => 'hasil', 'label' => 'Hasil', 'route' => 'consensus.show', 'session' => true],
