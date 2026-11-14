@@ -63,9 +63,10 @@ class WorkflowController extends Controller
 
     public function finalize(Request $request, DecisionSession $session): RedirectResponse
     {
-        $this->workflow->finalize($session, $request->user());
+        $data = $request->validate(['conclusion_note' => ['nullable', 'string', 'max:3000']]);
+        $this->workflow->finalize($session, $request->user(), $data['conclusion_note'] ?? null);
 
-        return back()->with('success', 'Hasil konsensus telah dipublikasikan kepada semua anggota.');
+        return redirect()->route('consensus.show', $session)->with('success', 'Hasil konsensus telah dipublikasikan kepada semua anggota.');
     }
 
     public function reopen(Request $request, DecisionSession $session): RedirectResponse

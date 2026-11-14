@@ -7,19 +7,27 @@ use App\Enums\ResultScope;
 use App\Enums\SessionStatus;
 use App\Enums\VoteStatus;
 use App\Models\AhpResult;
+use App\Models\AssessmentScore;
 use App\Models\DecisionSession;
 use App\Models\User;
+use App\Services\ConclusionService;
+use App\Services\DecisionCalculator;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 /**
  * H11 Hasil Konsensus (FR-17). Visibilitas mengikuti Bab 6.3:
- * - FINAL: semua DM melihat urutan, poin, rincian suara, dan bobot tiap DM;
+ * - FINAL: semua DM melihat urutan, poin, rincian suara, bobot tiap DM, dan kesimpulan;
  * - MENUNGGU FINALISASI: hanya ketua yang melihat total poin dan urutan;
  * - tahap lain: belum ada hasil.
  */
 class ConsensusController extends Controller
 {
+    public function __construct(
+        private readonly ConclusionService $conclusions,
+        private readonly DecisionCalculator $calculator,
+    ) {}
+
     public function show(Request $request, DecisionSession $session): View
     {
         $user = $request->user();
@@ -34,12 +42,24 @@ class ConsensusController extends Controller
         $members = User::orderByDesc('is_leader')->orderBy('id')->get();
         $positions = [];   // user_id => [case_id => posisi]
         $weights = collect();
+        $conclusion = null;
         if ($isFinal) {
             foreach ($session->votes()->where('status', VoteStatus::Terkirim)->get() as $vote) {
                 $positions[$vote->user_id] = array_flip(array_map('intval', $vote->ranking));
             }
             $weights = AhpResult::with('weights.criterion', 'user')->where('session_id', $session->id)->get()
                 ->sortBy(fn ($r) => $r->scope === ResultScope::Kelompok ? 99 : $members->search(fn ($m) => $m->id === $r->user_id));
+
+            if ($consensus) {
+                $conclusion = $this->conclusions->build(
+                    $consensus,
+                    $this->calculator->criteria(),
+                    $this->meanScores($session),
+                    $weights->firstWhere('scope', ResultScope::Kelompok)?->weights->pluck('weight', 'criterion_id')->all() ?? [],
+                    $positions,
+                    max(1, count($positions)),
+                );
+            }
         }
 
         return view('consensus.show', [
@@ -50,7 +70,24 @@ class ConsensusController extends Controller
             'positions' => $positions,
             'caseCount' => $session->cases()->count(),
             'weights' => $weights,
+            'conclusion' => $conclusion,
             'redFlagCases' => $session->cases()->has('redFlags')->with('redFlags')->get(),
         ]);
+    }
+
+    /** Rata-rata skor ketiga DM per kasus dan kriteria (dibuka hanya setelah FINAL, D13). */
+    private function meanScores(DecisionSession $session): array
+    {
+        $means = [];
+        AssessmentScore::query()
+            ->whereIn('assessment_id', $session->assessments()->pluck('id'))
+            ->selectRaw('case_id, criterion_id, AVG(score) as mean')
+            ->groupBy('case_id', 'criterion_id')
+            ->get()
+            ->each(function ($row) use (&$means) {
+                $means[$row->case_id][$row->criterion_id] = (float) $row->mean;
+            });
+
+        return $means;
     }
 }

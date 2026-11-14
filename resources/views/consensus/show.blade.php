@@ -59,6 +59,10 @@
             </div>
         </div>
 
+        @if ($conclusion)
+            @include('consensus.partials.conclusion', ['conclusion' => $conclusion, 'consensus' => $consensus])
+        @endif
+
         <div class="card-soft">
             <h3>Hasil Borda Count</h3>
             <div class="table-responsive">

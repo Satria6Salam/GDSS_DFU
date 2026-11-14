@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /** Hasil Borda satu sesi (D05, D15). */
 class ConsensusResult extends Model
 {
-    protected $fillable = ['session_id', 'status', 'deliberation_note', 'finalized_at', 'finalized_by'];
+    protected $fillable = ['session_id', 'status', 'deliberation_note', 'conclusion_note', 'finalized_at', 'finalized_by'];
 
     protected function casts(): array
     {

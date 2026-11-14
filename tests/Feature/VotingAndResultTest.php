@@ -124,6 +124,29 @@ class VotingAndResultTest extends TestCase
     }
 
     #[Test]
+    public function kesimpulan_dan_catatan_ketua_tampil_setelah_final(): void
+    {
+        foreach (DatasetV1::DECISION_MAKERS as $dm) {
+            $this->vote($dm);
+        }
+        $this->actingAs($this->user('dokter'))->get(route('consensus.show', $this->demo))
+            ->assertDontSee('Kesimpulan &amp; Tindak Lanjut', false);
+
+        $this->post(route('sessions.finalize', $this->demo), ['conclusion_note' => 'P07 dirujuk hari ini; P06 dijadwalkan pemeriksaan vaskular.'])
+            ->assertRedirect(route('consensus.show', $this->demo));
+
+        $this->actingAs($this->user('apoteker'))->get(route('consensus.show', $this->demo))->assertOk()
+            ->assertSee('Kesimpulan &amp; Tindak Lanjut', false)
+            ->assertSee('P06 menjadi prioritas evaluasi pertama dengan 21 dari 21 poin Borda, dipilih sebagai peringkat 1 oleh seluruh decision maker.')
+            ->assertSee('C5 kondisi sistemik (4,3)')                       // rata-rata skor kelompok P06 pada C5
+            ->assertSee('Evaluasi segera (di luar antrean)')
+            ->assertSee('Riwayat alergi Penisilin')                        // catatan farmasi P07
+            ->assertSee('eGFR 28: fungsi ginjal menurun berat')            // catatan farmasi P06
+            ->assertSee('P07 dirujuk hari ini; P06 dijadwalkan pemeriksaan vaskular.')
+            ->assertSee('bukan diagnosis');
+    }
+
+    #[Test]
     public function voting_belum_dibuka_pada_tahap_lain(): void
     {
         $this->workflow->reopen($this->demo, $this->user('dokter'), 'Uji');

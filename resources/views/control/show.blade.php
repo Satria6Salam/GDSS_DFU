@@ -196,7 +196,13 @@
                 @csrf
                 <div class="modal-header border-0"><h5 class="modal-title fw-800 text-navy" id="finalizeTitle">Finalisasi Hasil</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button></div>
-                <div class="modal-body pt-0 text-muted-2">Hasil yang difinalisasi tidak dapat diubah. Lanjutkan?</div>
+                <div class="modal-body pt-0">
+                    <p class="text-muted-2 small">Hasil yang difinalisasi tidak dapat diubah. Lanjutkan?</p>
+                    <label for="conclusion_note" class="form-label">Catatan kesimpulan &amp; rencana tindak lanjut (opsional)</label>
+                    <textarea id="conclusion_note" name="conclusion_note" class="form-control" rows="4"
+                              placeholder="Mis. P07 dirujuk evaluasi hari ini; P06 dijadwalkan pemeriksaan vaskular; kasus lain dipantau mingguan.">{{ old('conclusion_note') }}</textarea>
+                    <div class="small text-muted-2 mt-1">Ditampilkan kepada semua anggota di halaman Hasil sebagai keputusan tim.</div>
+                </div>
                 <div class="modal-footer border-0">
                     <button type="button" class="btn btn-outline-soft" data-bs-dismiss="modal">Batal</button>
                     <button class="btn btn-grad">Finalisasi &amp; Publikasikan</button>

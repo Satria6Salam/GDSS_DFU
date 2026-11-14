@@ -345,11 +345,11 @@ class SessionWorkflowService
     }
 
     // ------------------------------------------------------------------ S4
-    public function finalize(DecisionSession $session, User $leader): void
+    public function finalize(DecisionSession $session, User $leader, ?string $conclusionNote = null): void
     {
         $this->ensureLeader($leader);
 
-        $this->transition($session, function (DecisionSession $s) use ($leader) {
+        $this->transition($session, function (DecisionSession $s) use ($leader, $conclusionNote) {
             $this->ensureStatus($s, SessionStatus::MenungguFinalisasi, 'Hasil hanya dapat difinalisasi setelah semua suara masuk.');
 
             $consensus = $this->activeConsensus($s);
@@ -357,7 +357,13 @@ class SessionWorkflowService
                 throw new WorkflowException('Tetapkan urutan untuk kasus yang seri terlebih dahulu.');
             }
 
-            $consensus->update(['status' => ConsensusStatus::Final, 'finalized_at' => now(), 'finalized_by' => $leader->id]);
+            $consensus->update([
+                'status' => ConsensusStatus::Final,
+                'finalized_at' => now(),
+                'finalized_by' => $leader->id,
+                // Rencana penanganan nyata ditulis manusia, bukan dihasilkan sistem (Laporan 1.6).
+                'conclusion_note' => filled($conclusionNote) ? trim($conclusionNote) : null,
+            ]);
             $s->update(['status' => SessionStatus::Final, 'finalized_at' => now(), 'finalized_by' => $leader->id]);
             $this->audit->log('SESSION_FINALIZE', $s, SessionStatus::MenungguFinalisasi->value, SessionStatus::Final->value, user: $leader);
             $this->notify($s, User::all(), "Hasil konsensus sesi “{$s->title}” telah dipublikasikan.", 'S4');
